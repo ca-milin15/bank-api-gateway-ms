@@ -1,0 +1,38 @@
+server:
+  port: 8090
+spring:
+  cache:
+    type: none
+  webflux:
+    base-path: /api/pichincha
+  application:
+    name: bank-api-gateway-ms
+  cloud:
+    gateway:
+      x-forwarded:
+        proto-enabled: true
+      httpclient:
+        wiretap: true
+      httpserver:
+        wiretap: true
+      routes:
+        - id: customer
+          predicates:
+            - Path=/api/pichincha/bank/customer/**
+          uri: http://localhost:8091/
+        - id: transaction
+          predicates:
+            - Path=/api/pichincha/bank/movimientos/**
+          uri: http://localhost:8092/
+        - id: transaction-report
+          predicates:
+            - Path=/api/pichincha/bank/movimientos/reportes/**
+          uri: http://localhost:8092/
+
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
